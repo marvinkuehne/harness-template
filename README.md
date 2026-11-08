@@ -10,7 +10,6 @@ it from its plugin cache, so nothing is copied into a project's `.claude/`.
 - `plugins/harness/`: the plugin.
   - `skills/prepare-commit`: explanation, how to check it, approved message, then the commit.
   - `skills/plan-slices`: plan work as slices and steps before any code.
-  - `skills/ping`: test skill, proves the plugin is loaded.
   - `hooks/hooks.json` and `scripts/commit-gate.sh`: block `git commit` until
     `prepare-commit` ran for exactly the staged changes.
 
@@ -21,6 +20,13 @@ it from its plugin cache, so nothing is copied into a project's `.claude/`.
   template and CODEOWNERS.
 
 Managed settings for client machines come in a later step.
+
+## Before you work with others
+
+The template is tested for one person on one machine. Before a second person
+uses it, or a project holds client data, work through
+[docs/how-to/before-working-with-others.md](docs/how-to/before-working-with-others.md).
+The design reasons are in [docs/explanation/design.md](docs/explanation/design.md).
 
 ## New project
 
@@ -60,7 +66,8 @@ claude plugin marketplace add <path to this repo or owner/repo>
 claude plugin install harness@redeploy-harness
 ```
 
-Check it with `/harness:ping` in a new session.
+Check it with `claude plugin list`: `harness@redeploy-harness` shows as enabled.
+Then run `/harness:plan-slices` in a new session.
 
 ## Check changes
 
