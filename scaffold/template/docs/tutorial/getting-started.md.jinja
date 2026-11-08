@@ -1,0 +1,38 @@
+# Getting started
+
+Goal: a working copy of {{ project_name }} on your machine, and one change
+that goes through the whole workflow.
+
+## 1. Set up
+
+```bash
+git clone <repo url>
+cd {{ project_name | lower | replace(' ', '-') }}
+git config core.hooksPath .githooks
+```
+
+Open the folder in Claude Code. It asks you to trust the folder and install the
+harness plugin: accept both.
+
+## 2. Run it
+
+{% if dev_command %}```bash
+{{ dev_command }}
+```
+
+You should see the project start. <!-- Describe what the newcomer sees. -->
+{% else %}<!-- Add the command that starts the project and what the newcomer should see. -->
+{% endif %}
+## 3. Make one change
+
+<!-- A small, safe change with a visible result, for example a text change.
+Walk through it: edit, run the checks, `/harness:prepare-commit`, commit. -->
+
+## 4. Check what you did
+
+```bash
+{% if test_command %}{{ test_command }}{% else %}<test command>{% endif %}
+```
+
+The tests pass. You have made one change through the same steps every change
+here follows.

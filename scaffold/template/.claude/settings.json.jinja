@@ -1,0 +1,29 @@
+{% set allowed = [] -%}
+{% for c in [lint_command, test_command, build_command] -%}
+{% if c %}{% set _ = allowed.append("Bash(" ~ c ~ ")") %}{% endif -%}
+{% endfor -%}
+{
+  "extraKnownMarketplaces": {
+    "{{ marketplace_name }}": {
+      "source": { "source": "github", "repo": "{{ marketplace_repo }}" }
+    }
+  },
+  "enabledPlugins": {
+    "harness@{{ marketplace_name }}": true
+  },
+  "permissions": {
+    "allow": {{ allowed | tojson }},
+    "ask": [
+      "Bash(git commit *)",
+      "Bash(git push *)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./secrets/**)",
+      "Edit(./.claude/settings.json)",
+      "Edit(./.claude/harness.json)",
+      "Edit(./.githooks/**)"
+    ]
+  }
+}

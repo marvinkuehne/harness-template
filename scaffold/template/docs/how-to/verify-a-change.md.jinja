@@ -1,0 +1,31 @@
+# Verify a change
+
+How to check that a step works and report it. The workflow in `CLAUDE.md` asks
+for it before a step starts (state how the result will be verified) and after
+it (report the result).
+
+## Check it
+
+- **A check that can fail.** Name the tests, and either make one edit that turns
+  a test red (then undo it) or run a check by hand with the result it expects. A
+  check that cannot go red proves nothing.
+- **Green.** {% if build_command or lint_command or test_command %}{% set cmds = [] %}{% for c in [build_command, lint_command, test_command] %}{% if c %}{% set _ = cmds.append("`" ~ c ~ "`") %}{% endif %}{% endfor %}{{ cmds | join(", ") }} pass after the step.{% else %}The project's build, lint and test commands pass after the step.{% endif %}
+
+- **Stored data.** A step that changes or removes stored data is also run from
+  old stored data. A check that starts from empty storage misses that case.
+- **Deadlines and time.** Anything with a schedule or deadline gets a check on
+  both sides of the deadline, with a faked clock if needed.
+- **Fixed test data.** Tests for rules that outlive the current data use their
+  own data, not the live data, because the live data changes.
+
+## Report it
+
+Keep the report to about 10 lines: what ran, and that it matches the plan.
+
+- **Tests:** one line: how many pass, and which test went red on the red edit.
+- **Manual checks:** one short line per expectation (expected, seen), then one
+  sentence on why the run matches the plan.
+- Name anything not run or failed.
+
+<!-- Add project-specific checks here: browser checks, screenshots, how to seed
+test data, how to fake the clock. -->

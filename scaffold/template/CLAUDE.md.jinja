@@ -1,0 +1,69 @@
+# {{ project_name }}
+
+{{ project_description }}
+
+<!-- Keep this file under 200 lines. Put only what Claude cannot read from the
+code: commands, rules that are easy to get wrong, and where the docs are. -->
+
+## Structure
+
+<!-- One line per top-level folder: what lives there. -->
+
+## Rules
+
+<!-- The project's rules that are easy to break. One bullet each, with the
+reason when it is not obvious. Rules that must hold every time belong in a hook
+or a deny rule, not here. -->
+
+## Documentation
+
+Docs follow Diátaxis under `docs/`. All four quadrants are first-class: never
+skip one because it seems unneeded. A doc that mixes quadrants gets split.
+
+- `docs/tutorial/`: learning-oriented walkthroughs. Start with `getting-started.md`.
+- `docs/how-to/`: task-oriented recipes. `verify-a-change.md`: how to check a step and report it. Read before stating how a step will be verified and before reporting the result.
+- `docs/reference/`: lookups. `repo-conventions.md`: commit messages, code comments and prose that lands in the repo.
+- `docs/explanation/`: design rationale. `harness.md`: why the guardrails exist.
+
+<!-- Add one line per doc, in the form "Read before changing X". -->
+
+Update the relevant documentation in the same commit when the documented
+behavior changes.
+
+## Workflow
+
+Work is split into small steps, one commit each.
+
+Before implementing a step:
+1. State the intended behavior.
+2. State the relevant constraints or rules.
+3. List the files that change and, per file, what changes in one line.
+4. State how the result will be verified (`docs/how-to/verify-a-change.md`).
+5. Wait for approval before making changes.
+
+After implementing, run the checks and report the results as
+`docs/how-to/verify-a-change.md` describes.
+
+Before every commit, run `/harness:prepare-commit`. For a plan, use
+`/harness:plan-slices`.
+
+## Commands
+
+{% if dev_command %}- `{{ dev_command }}`: start the project
+{% endif %}{% if build_command %}- `{{ build_command }}`: build
+{% endif %}{% if lint_command %}- `{{ lint_command }}`: lint and type-check
+{% endif %}{% if test_command %}- `{{ test_command }}`: test
+{% endif %}- Once per clone: `git config core.hooksPath .githooks`
+
+## Tooling
+
+The following rules are enforced mechanically:
+
+- `.githooks/commit-msg` checks commit messages against `docs/reference/repo-conventions.md`.
+- `.claude/settings.json` asks before every git commit and git push, and denies reading `.env` files and `secrets/`.
+- `.claude/settings.json` denies Claude edits to itself, `.claude/harness.json` and `.githooks/`. Change them by hand.
+{% if commit_gate %}- The harness plugin blocks a Claude commit until `/harness:prepare-commit` has run for exactly the staged changes (`.claude/harness.json`).
+{% endif %}
+The harness plugin (`harness@{{ marketplace_name }}`) provides the skills and
+hooks. This file and `.claude/settings.json` come from the scaffold: update
+them with `copier update`.

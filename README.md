@@ -14,8 +14,32 @@ it from its plugin cache, so nothing is copied into a project's `.claude/`.
   - `hooks/hooks.json` and `scripts/commit-gate.sh`: block `git commit` until
     `prepare-commit` ran for exactly the staged changes.
 
-Files that must live inside each project (`CLAUDE.md`, `docs/`, settings,
-git hooks) and the managed settings for client machines come in later steps.
+- `copier.yml` and `scaffold/template/`: the project files that must live in
+  each repo, generated with copier (see "New project"). They are `CLAUDE.md`,
+  `docs/` in the four Diátaxis folders, `.claude/settings.json`,
+  `.claude/harness.json`, `.githooks/commit-msg`, `.gitignore`, a pull request
+  template and CODEOWNERS.
+
+Managed settings for client machines come in a later step.
+
+## New project
+
+Run in the project folder (needs `uv`; copier is fetched on demand):
+
+```bash
+uvx --from copier copier copy gh:marvinkuehne/harness-template .
+```
+
+It asks for the project name, the commands and a few options, and writes the
+files. Pull later template changes into the project with:
+
+```bash
+uvx --from copier copier update
+```
+
+Then edit the `<!-- ... -->` placeholders in `CLAUDE.md`. The settings deny
+Claude edits to `.claude/settings.json`, `.claude/harness.json` and
+`.githooks/`, so change those by hand.
 
 ## Commit gate (opt-in)
 

@@ -1,0 +1,51 @@
+_subdirectory: scaffold/template
+_templates_suffix: .jinja
+_min_copier_version: "9.0.0"
+
+project_name:
+  type: str
+  help: Name of the project
+
+project_description:
+  type: str
+  help: One sentence on what the project is and who uses it
+
+dev_command:
+  type: str
+  default: ""
+  help: Command that starts the project locally (empty if none)
+
+build_command:
+  type: str
+  default: ""
+  help: Command that builds the project (empty if none)
+
+lint_command:
+  type: str
+  default: ""
+  help: Command that lints and type-checks (empty if none)
+
+test_command:
+  type: str
+  default: ""
+  help: Command that runs the tests (empty if none)
+
+commit_gate:
+  type: bool
+  default: true
+  help: Block git commit by Claude until /harness:prepare-commit ran?
+
+code_owner:
+  type: str
+  default: ""
+  help: GitHub user or team for CODEOWNERS, e.g. "@RedeployAB/platform" (empty to skip)
+
+marketplace_name:
+  type: str
+  default: redeploy-harness
+  help: Name of the marketplace that holds the harness plugin
+
+marketplace_repo:
+  type: str
+  default: marvinkuehne/harness-template
+  help: GitHub repo (owner/name) of that marketplace

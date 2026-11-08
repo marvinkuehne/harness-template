@@ -1,0 +1,81 @@
+#!/usr/bin/env python3
+# Rejects commit messages that break the mechanical rules in
+# docs/reference/repo-conventions.md. Judgment rules (explain why, no tooling chatter) are
+# not checkable here and stay with the reviewer.
+import re
+import sys
+
+TYPES = "feat|fix|perf|refactor|docs|test|style|build|ci|deps|chore|revert"
+MAX_COLS = 72
+FILLER = re.compile(
+    r"\b(comprehensive|robust|seamless(ly)?|powerful|cutting-edge|game-changer"
+    r"|elevat(e|es|ed|ing)|unleash(es|ed|ing)?|leverag(e|es|ed|ing)"
+    r"|delv(e|es|ed|ing)|harness the power of|it'?s worth noting"
+    r"|it is worth noting|it(?: i|')s important to note|in conclusion"
+    r"|at the end of the day)\b",
+    re.IGNORECASE,
+)
+META = re.compile(
+    r"\b(audit(s|ed|ing)?|owasp|cwe(-\d+)?|cve(-[\d-]+)?|vulnerabilit(y|ies)"
+    r"|remediat\w*|roadmap|sprint|milestone)\b",
+    re.IGNORECASE,
+)
+
+
+def message_lines(path):
+    lines = []
+    for line in open(path, encoding="utf-8").read().splitlines():
+        # git's scissors line marks the start of the diff in `commit -v`
+        if line.startswith("# ------------------------ >8"):
+            break
+        if not line.startswith("#"):
+            lines.append(line.rstrip())
+    while lines and not lines[0]:
+        lines.pop(0)
+    return lines
+
+
+def check(lines):
+    if not lines:
+        return []
+    subject = lines[0]
+    # git writes these itself; fixup/squash are rewritten before they land
+    if subject.startswith(("Merge ", "fixup! ", "squash! ", "amend! ")):
+        return []
+
+    errors = []
+    if re.match(rf"^({TYPES})\(", subject):
+        errors.append("no scopes: write '<type>: <description>'")
+    elif not re.match(rf"^({TYPES}): \S", subject):
+        errors.append(f"subject must be '<type>: <description>', type one of {TYPES}")
+    else:
+        description = subject.split(": ", 1)[1]
+        if description[0].isupper():
+            errors.append("lowercase the description")
+    if len(subject) > MAX_COLS:
+        errors.append(f"subject is {len(subject)} characters, max {MAX_COLS}")
+    if subject.endswith("."):
+        errors.append("no trailing period in the subject")
+    if len(lines) > 1 and lines[1]:
+        errors.append("leave a blank line after the subject")
+    for n, line in enumerate(lines[1:], start=2):
+        if len(line) > MAX_COLS and "://" not in line:
+            errors.append(f"line {n} is {len(line)} columns, wrap at {MAX_COLS}")
+
+    text = "\n".join(lines)
+    if "—" in text or "–" in text:
+        errors.append("no em or en dashes: use a comma, colon, parentheses or two sentences")
+    for match in FILLER.finditer(text):
+        errors.append(f"filler wording: '{match.group(0)}'")
+    for match in META.finditer(text):
+        errors.append(f"process or review framing: '{match.group(0)}'")
+    return errors
+
+
+if __name__ == "__main__":
+    problems = check(message_lines(sys.argv[1]))
+    if problems:
+        print("commit-msg: message rejected (see docs/reference/repo-conventions.md)", file=sys.stderr)
+        for p in problems:
+            print(f"  - {p}", file=sys.stderr)
+        sys.exit(1)
