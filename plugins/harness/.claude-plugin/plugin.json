@@ -1,0 +1,8 @@
+{
+  "name": "harness",
+  "version": "0.1.0",
+  "description": "Standard skills, subagents and hooks for every project",
+  "author": {
+    "name": "Marvin Kuhne"
+  }
+}

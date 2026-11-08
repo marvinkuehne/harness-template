@@ -1,0 +1,14 @@
+{
+  "name": "redeploy-harness",
+  "description": "Claude Code harness for Redeploy projects: skills, subagents and hooks",
+  "owner": {
+    "name": "Marvin Kuhne"
+  },
+  "plugins": [
+    {
+      "name": "harness",
+      "source": "./plugins/harness",
+      "description": "Standard skills, subagents and hooks for every project"
+    }
+  ]
+}
