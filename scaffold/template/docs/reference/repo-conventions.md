@@ -21,6 +21,27 @@ It does not apply to chat replies.
   its place.
 - Prefer the concrete over the grand. Say what a thing does, not how impressive it is.
 
+## Branch names
+
+Format: `<type>/<short-description>`. The types are the same as for commit messages
+(below). Lowercase, words joined by hyphens, no scope.
+
+```
+feat/add-search
+fix/empty-list-crash
+chore/add-harness
+```
+
+Avoid:
+
+```
+add-harness              # no type
+Feat/AddSearch           # capitals, no hyphens
+alex/work                # a name instead of a type, says nothing
+```
+
+No hook checks branch names: the reviewer does.
+
 ## Commit messages
 
 Conventional Commits grammar with Linux-kernel message discipline. The grammar gives
